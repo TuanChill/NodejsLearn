@@ -1,17 +1,16 @@
 const express = require("express");
-const { signUp, login, secretHandler } = require("../controllers/user");
-const {validateBody} = require("../utils/validator/validator");
-const {userSignInSchema, userSignUpSchema} = require("../utils/validator/schemas");
+const {signUp, login, secretHandler} = require("../controllers/user");
 
 const authRoute = express.Router();
 
 // userRoute.route("/users").get(getUser).post(createUser);
 
-authRoute.route("/signup").post( validateBody(userSignUpSchema), signUp);
+authRoute.route("/signup").post(signUp);
 
-authRoute.route("/login").post(validateBody(userSignInSchema) ,login);
+authRoute.route("/login").post(login);
 
 authRoute.route("/logout").post();
+
 
 authRoute.route("refresh-token").post();
 

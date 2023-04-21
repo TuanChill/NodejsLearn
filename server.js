@@ -8,7 +8,7 @@ const morgan = require("morgan");
 require("express-async-errors");
 
 const authRoute = require("./src/routes/authRoute");
-const connectDB = require("./src/configs/connectDB.js");
+require("./src/helpers/connectDB_mongo.js");
 const {errHandler, notFoundHandler} = require("./src/middlewares/errHandler");
 
 
@@ -17,7 +17,6 @@ const PORT = process.env.PORT || 5001;
 
 //Set up
 
-connectDB();
 
 // Middleware
 app.use(

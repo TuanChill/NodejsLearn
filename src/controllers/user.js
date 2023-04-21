@@ -1,22 +1,36 @@
-const User = require("../models/user");
-const userSchema = require("../utils/validator/schemas");
-const {checkSameEmail} = require("../utils/validator/validator");
-const {createToken} = require("./tokenHandler");
+const createError = require("http-errors");
 
+const User = require("../models/user");
+const {createToken} = require("./tokenHandler");
+const {userValidate, userSignUpSchema} = require("../helpers/validator");
 const signUp = async (req, res, next) => {
 
-    //  check user email already exists in database
-    const foundUser = await User.findOne({email: req.body.email});
-    if (foundUser) {
-        const err = new Error("Email already exists");
-        err.status = 302;
-        next(err);
+    const { firstName, lastName, email, phoneNumber,  birthday, gender, password} = req.body;
+
+    // pre validate before save to database
+    const {error} = userValidate(userSignUpSchema, req.body);
+
+    if(error) {
+        throw createError(400, error);
     }
 
-    // pre save to database: hash password
+    //  check user email already exists in database
+    const foundUser = await User.findOne({email: email});
+    if (foundUser) {
+        throw createError(409, `${email} already exists`);
+    }
+
 
     //  create new user and save to database
-    const newUser = await new User(req.body);
+    const newUser = await new User({
+        firstName,
+        lastName,
+        email,
+        phoneNumber,
+        birthday,
+        gender,
+        password,
+    });
     await newUser.save();
 
     //  create token
