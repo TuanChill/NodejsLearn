@@ -17,10 +17,9 @@ const userSignUpSchema = Joi.object({
 });
 
 const userSignInSchema = Joi.object({
-    email: Joi.string().email(),
-    phoneNumber: Joi.string(),
-    password: Joi.string().required().min(6),
-}).xor("email", "phoneNumber");
+    email: Joi.string().email().pattern(new RegExp('gmail.com$')).required(),
+    password: Joi.string().required().min(6).max(20),
+});
 
 const userValidate = (schema, data) => {
     return schema.validate(data);

@@ -1,5 +1,6 @@
-const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
+const mongoose = require("mongoose");
+const createError = require("http-errors");
 
 const mongoDB = require("../helpers/connectDB_mongo");
 
@@ -26,6 +27,7 @@ const userSchema = new Schema({
   },
 });
 
+// hash password before save to database
 userSchema.pre('save', async function (next) {
   try {
     const salt = await bcrypt.genSalt(10);
@@ -36,6 +38,11 @@ userSchema.pre('save', async function (next) {
   }
 });
 
+// compare password and hashed password in database
+userSchema.method('comparePassword', async function (password) {
+    return  await bcrypt.compare(password, this.password);
+});
+
 const User = mongoDB.model("user", userSchema);
 
-module.exports = User;
+module.exports = {User};
