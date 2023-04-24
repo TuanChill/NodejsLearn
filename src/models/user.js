@@ -2,7 +2,7 @@ const bcrypt = require("bcryptjs");
 const mongoose = require("mongoose");
 const createError = require("http-errors");
 
-const mongoDB = require("../helpers/connectDB_mongo");
+const mongoDB = require("../helpers/connectMongo");
 
 const { Schema, model } = mongoose;
 

@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const mongoDB = require("../helpers/connectDB_mongo");
+const mongoDB = require("../helpers/connectMongo");
 
 const {Schema, model} = mongoose;
 
