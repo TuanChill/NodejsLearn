@@ -3,6 +3,7 @@ const createError = require("http-errors");
 const {User} = require("../models/user");
 const {userValidate, userSignUpSchema, userSignInSchema} = require("../helpers/validator");
 const {signAccessToken, signRefreshToken, verifyRefreshToken} = require("../services/jwt");
+const deleteByKey = require('../helpers/deleteByKey');
 
 const signUp = async (req, res, next) => {
 
@@ -81,15 +82,35 @@ const login = async (req, res, next) => {
     });
 };
 
+const logout = async (req, res, next) => {
+
+    const {refreshToken} = req.body
+
+    //validate body
+    if (!refreshToken) throw createError(400, "No Refresh Token sent");
+
+    // verify refresh Token
+    const {userId} = await verifyRefreshToken(refreshToken);
+
+    // delete refresh token in database
+    await deleteByKey(userId.toString());
+
+    return res.json({
+        success: true,
+        message: 'Logout successfully!',
+    })
+}
+
 const refreshTokenHandler = async (req, res, next) => {
 
     const {refreshToken} = req.body;
 
+    // validate body
+    if (!refreshToken) throw createError(400, "No Refresh Token sent");
 
     // verify token
-    const payload = await verifyRefreshToken(refreshToken);
+    const {userId} = await verifyRefreshToken(refreshToken);
 
-    const {userId} = payload;
 
     // Get a new Token
     const accessToken = signAccessToken(userId);
@@ -105,5 +126,6 @@ const refreshTokenHandler = async (req, res, next) => {
 module.exports = {
     login,
     signUp,
+    logout,
     refreshTokenHandler,
 };

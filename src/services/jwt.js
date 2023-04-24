@@ -81,7 +81,7 @@ const verifyRefreshToken = async (refreshToken) => {
                 const res = await client.get(payload.userId.toString())
 
                 if (refreshToken === res)
-                    resolve(payload);
+                   return resolve(payload);
 
                 reject(createError(401, "Unauthorized!"));
 
